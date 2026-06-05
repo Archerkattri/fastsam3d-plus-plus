@@ -1,0 +1,42 @@
+[
+  {
+    "object": "shutterstock_stylish_kidsroom_1640806567",
+    "basis": "taylor",
+    "adacfg": false,
+    "config": "taylor",
+    "latency_s": 7.684,
+    "CD_vs_base": 0.0,
+    "F1_vs_base": 1.0,
+    "n_pts": 30000
+  },
+  {
+    "object": "shutterstock_stylish_kidsroom_1640806567",
+    "basis": "hermite",
+    "adacfg": false,
+    "config": "hermite",
+    "latency_s": 8.332,
+    "CD_vs_base": 0.01623,
+    "F1_vs_base": 1.0,
+    "n_pts": 30000
+  },
+  {
+    "object": "shutterstock_stylish_kidsroom_1640806567",
+    "basis": "taylor",
+    "adacfg": true,
+    "config": "taylor+adacfg",
+    "latency_s": 8.108,
+    "CD_vs_base": 0.00892,
+    "F1_vs_base": 1.0,
+    "n_pts": 30000
+  },
+  {
+    "object": "shutterstock_stylish_kidsroom_1640806567",
+    "basis": "hermite",
+    "adacfg": true,
+    "config": "hermite+adacfg",
+    "latency_s": 7.723,
+    "CD_vs_base": 0.0162,
+    "F1_vs_base": 1.0,
+    "n_pts": 30000
+  }
+]

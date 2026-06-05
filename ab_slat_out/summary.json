@@ -1,0 +1,37 @@
+[
+  {
+    "config": "vanilla",
+    "lat": 8.003,
+    "speedup": 1.0,
+    "CD_vs_base": 0.0,
+    "F1_vs_base": 1.0
+  },
+  {
+    "config": "hicache_i3o2",
+    "lat": 5.563,
+    "speedup": 1.439,
+    "CD_vs_base": 0.0126,
+    "F1_vs_base": 1.0
+  },
+  {
+    "config": "dmd_i4",
+    "lat": 5.605,
+    "speedup": 1.428,
+    "CD_vs_base": 0.0127,
+    "F1_vs_base": 1.0
+  },
+  {
+    "config": "dmd_i5",
+    "lat": 5.435,
+    "speedup": 1.473,
+    "CD_vs_base": 0.0126,
+    "F1_vs_base": 1.0
+  },
+  {
+    "config": "dmd_i6",
+    "lat": 5.122,
+    "speedup": 1.562,
+    "CD_vs_base": 0.0127,
+    "F1_vs_base": 1.0
+  }
+]
