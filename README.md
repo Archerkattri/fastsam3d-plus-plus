@@ -111,6 +111,70 @@ library [`hicache-plus-plus`](../hicache-plus-plus); plain HiCache lives in
   feature caching is, to our knowledge, new. Standalone: [`hicache-plus-plus`](../hicache-plus-plus).
 - **Adaptive-CFG** — Adaptive Guidance, [arXiv:2312.12487](https://arxiv.org/abs/2312.12487).
 
+## Citation
+
+If you use this fork, please cite the base model and the acceleration methods it builds on.
+
+**Fast-SAM3D** (base model):
+
+```bibtex
+@misc{feng2026fastsam3d3dfyimagesfaster,
+      title={Fast-SAM3D: 3Dfy Anything in Images but Faster}, 
+      author={Weilun Feng and Mingqiang Wu and Zhiliang Chen and Chuanguang Yang and Haotong Qin and Yuqi Li and Xiaokun Liu and Guoxin Fan and Zhulin An and Libo Huang and Yulun Zhang and Michele Magno and Yongjun Xu},
+      year={2026},
+      eprint={2602.05293},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2602.05293}, 
+}
+```
+
+**HiCache** (scaled-Hermite velocity forecasting — the polynomial baseline retained as warm-up):
+
+```bibtex
+@misc{hicache2025,
+      title={HiCache: Training-free Acceleration of Diffusion Models via Hermite Polynomial Feature Forecasting},
+      eprint={2508.16984},
+      archivePrefix={arXiv},
+      year={2025}
+}
+```
+
+**Dynamic Mode Decomposition** (the exponential basis behind HiCache++):
+
+```bibtex
+@article{schmid2010dmd,
+      title={Dynamic mode decomposition of numerical and experimental data},
+      author={Schmid, Peter J.},
+      journal={Journal of Fluid Mechanics},
+      volume={656},
+      pages={5--28},
+      year={2010}
+}
+```
+
+**TaylorSeer** (the cache the base model accelerates with):
+
+```bibtex
+@misc{taylorseer2025,
+      title={From Reusing to Forecasting: Accelerating Diffusion Models with TaylorSeers},
+      eprint={2503.06923},
+      archivePrefix={arXiv},
+      year={2025}
+}
+```
+
+**Adaptive Guidance**:
+
+```bibtex
+@misc{adaptiveguidance2023,
+      title={Adaptive Guidance: Training-free Acceleration of Conditional Diffusion Models},
+      eprint={2312.12487},
+      archivePrefix={arXiv},
+      year={2023}
+}
+```
+
 ## Weights & data
 
 Model weights and demo/example assets are **not** committed to this repo — only the acceleration
