@@ -125,8 +125,11 @@ library [`hicache-plus-plus`](../hicache-plus-plus); plain HiCache lives in
 
 - **Fast-SAM3D** — © [wlfeng0509](https://github.com/wlfeng0509/Fast-SAM3D)
   ([arXiv:2602.05293](https://arxiv.org/abs/2602.05293)); built on
-  [SAM3D](https://github.com/facebookresearch/sam-3d-objects). The upstream README is preserved in
-  this fork's git history and its license/attribution is unchanged.
+  [SAM3D](https://github.com/facebookresearch/sam-3d-objects) (© Meta). The upstream README is preserved
+  in this fork's git history and its license/attribution is unchanged. The SAM 3D weights this fork runs
+  on remain under the Meta [SAM License](./LICENSE) — research/responsible-use, publication-acknowledgement,
+  and trade-control / ITAR / sanctions restrictions apply; it is **not** permissive or unconditionally
+  commercial.
 - **HiCache** — scaled-Hermite velocity forecasting, [arXiv:2508.16984](https://arxiv.org/abs/2508.16984)
   (the polynomial baseline retained here as warm-up + comparison).
 - **HiCache++** *(this work)* — the **DMD/Prony exponential** velocity forecaster. DMD (Schmid 2010)
