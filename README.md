@@ -30,7 +30,7 @@ base generator, and the `+` / `++` suffix is a **method choice**, not a rival pr
 | Hunyuan3D-2 mini | `hunyuan2-plus` | `hunyuan2-plus-plus` |
 | SAM 3D Objects | `sam3d-plus` | `sam3d-plus-plus` |
 | Fast-SAM3D | `fastsam3d-plus` | `fastsam3d-plus-plus` |
-| DiT-XL/2 (ImageNet) | `dit-plus` | `dit-plus-plus` |
+| DiT-XL/2 (ImageNet) | `dit-plus` *(unreleased)* | `dit-plus-plus` *(unreleased)* |
 | TRELLIS (v1) | `faster-trellis` | `faster-trellis-plus-plus` |
 | TRELLIS.2-4B (v2) | `hermit-trellis2` | `hermit-trellis2-plus-plus` |
 
@@ -117,8 +117,8 @@ interval-6** — the same FlowMatching substrate as SAM3D, where the exponential
 **two intervals further** than HiCache's polynomial (Hermite is lossless to interval-3). At
 interval-6 it also gives the best speedup of the lossless configs. Full A/B tables, the controlled
 forecast microbenchmark, and the Hunyuan3D / SAM3D / Fast-SAM3D numbers are in the standalone
-library [`hicache-plus-plus`](../hicache-plus-plus); plain HiCache lives in
-[`fastsam3d-plus`](../fastsam3d-plus).
+library [`hicache-plus-plus`](https://github.com/Archerkattri/hicache-plus-plus); plain HiCache lives in
+[`fastsam3d-plus`](https://github.com/Archerkattri/fastsam3d-plus).
 
 > The basis swap moves latency only on the **slat** stage (where the forecaster replaces DiT
 > calls). The SS stage already runs a fixed TaylorSeer stride, so Hermite ⇄ DMD there is a wash.
@@ -136,7 +136,7 @@ library [`hicache-plus-plus`](../hicache-plus-plus); plain HiCache lives in
   (the polynomial baseline retained here as warm-up + comparison).
 - **HiCache++** *(this work)* — the **DMD/Prony exponential** velocity forecaster. DMD (Schmid 2010)
   / Prony (1795) are classical spectral estimation; their application to diffusion / flow-matching
-  feature caching is, to our knowledge, new. Standalone: [`hicache-plus-plus`](../hicache-plus-plus).
+  feature caching is, to our knowledge, new. Standalone: [`hicache-plus-plus`](https://github.com/Archerkattri/hicache-plus-plus).
 - **Adaptive-CFG** — Adaptive Guidance, [arXiv:2312.12487](https://arxiv.org/abs/2312.12487).
 
 ## Citation
@@ -209,3 +209,12 @@ Model weights and demo/example assets are **not** committed to this repo — onl
 architecture (code + integration). Download the base-model weights from the upstream project,
 [wlfeng0509/Fast-SAM3D](https://github.com/wlfeng0509/Fast-SAM3D), per its instructions, and point the loader at them (see the code / upstream README). This
 keeps the repository lightweight and avoids redistributing third-party weights.
+
+---
+
+## Family
+
+Part of the **HiCache++ acceleration family**.
+
+- **Family hub:** [`hicache-plus-plus`](https://github.com/Archerkattri/hicache-plus-plus) — the basis library behind this adapter.
+- **Sibling:** [`fastsam3d-plus`](https://github.com/Archerkattri/fastsam3d-plus) — the same base model with the HiCache (scaled-Hermite) polynomial-forecast variant.
