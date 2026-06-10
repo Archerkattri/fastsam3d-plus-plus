@@ -28,6 +28,8 @@ def main():
     ap.add_argument("--mask-index", type=int, default=14)
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--out", default=str(FASTSAM3D_ROOT / "ab_slat_out"))
+    ap.add_argument("--configs", nargs="+", default=None,
+                    help="subset of config names to run (vanilla always recommended first)")
     a = ap.parse_args()
 
     os.environ.setdefault("CUDA_VISIBLE_DEVICES", str(a.gpu))
@@ -58,7 +60,12 @@ def main():
         ("dmd_i4",       dict(method="dmd", interval=4, first_enhance=3, history=5, max_order=2, sigma=0.5)),
         ("dmd_i5",       dict(method="dmd", interval=5, first_enhance=4, history=6, max_order=3, sigma=0.5)),
         ("dmd_i6",       dict(method="dmd", interval=6, first_enhance=4, history=6, max_order=3, sigma=0.55)),
+        # wider-interval Hermite probes (where the polynomial basis is expected to bite)
+        ("hicache_i5o3", dict(method="hicache", interval=5, max_order=3, first_enhance=4, sigma=0.5)),
+        ("hicache_i6o3", dict(method="hicache", interval=6, max_order=3, first_enhance=4, sigma=0.55)),
     ]
+    if a.configs:
+        CONFIGS = [(n, c) for n, c in CONFIGS if n in a.configs]
 
     def apply(cfg):
         if hasattr(slat, "disable_hicache"):

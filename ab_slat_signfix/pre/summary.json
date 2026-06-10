@@ -1,0 +1,30 @@
+[
+  {
+    "config": "vanilla",
+    "lat": 8.626,
+    "speedup": 1.0,
+    "CD_vs_base": 0.0,
+    "F1_vs_base": 1.0
+  },
+  {
+    "config": "hicache_i3o2",
+    "lat": 6.356,
+    "speedup": 1.357,
+    "CD_vs_base": 0.0125,
+    "F1_vs_base": 1.0
+  },
+  {
+    "config": "hicache_i5o3",
+    "lat": 6.018,
+    "speedup": 1.434,
+    "CD_vs_base": 0.0127,
+    "F1_vs_base": 1.0
+  },
+  {
+    "config": "hicache_i6o3",
+    "lat": 5.929,
+    "speedup": 1.455,
+    "CD_vs_base": 0.0128,
+    "F1_vs_base": 1.0
+  }
+]

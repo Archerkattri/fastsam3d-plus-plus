@@ -3,7 +3,7 @@
 Fast-SAM3D forecasts a cached feature at a *skipped* sampling step with a Taylor
 expansion ``sum_i (1/i!) * Delta^i * x^i`` (the monomial basis ``x^i`` — TaylorSeer,
 inherited from Fast-TRELLIS). This module lets that basis be swapped for the
-**dual-scaled physicist's Hermite** basis ``Htilde_i(-x)`` (**HiCache**,
+**dual-scaled physicist's Hermite** basis ``Htilde_i(x)`` (**HiCache**,
 arXiv:2508.16984 — the basis used by faster-trellis / hermit-trellis2):
 
     Htilde_n(x) = sigma^n * H_n(sigma * x),   sigma in (0, 1)
@@ -43,9 +43,9 @@ def basis_term(i: int, x_dist) -> float:
     steps since the last compute step). Drop-in replacement for ``x_dist ** i``.
 
     taylor  -> x_dist ** i            (monomial, the original)
-    hermite -> Htilde_i(-x_dist)      (HiCache; order-0 == 1 == x_dist**0)
+    hermite -> Htilde_i(x_dist)       (HiCache; order-0 == 1 == x_dist**0)
     """
     if forecast_basis() == "hermite":
         sigma = float(os.environ.get("GF_HERMITE_SIGMA", "0.5"))
-        return (sigma ** i) * physicists_hermite(i, sigma * (-float(x_dist)))
+        return (sigma ** i) * physicists_hermite(i, sigma * float(x_dist))
     return x_dist ** i

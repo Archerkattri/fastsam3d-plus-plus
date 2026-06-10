@@ -47,9 +47,13 @@ def physicists_hermite(n: int, x: float) -> float:
 
 
 def hermite_coeff(order: int, k: int, sigma: float) -> float:
-    """Forecast coefficient ``Htilde_order(-k) / order!`` (a scalar, same for all
-    leaves). ``Htilde_n(x) = sigma^n H_n(sigma x)``."""
-    x = -float(k)
+    """Forecast coefficient ``Htilde_order(k) / order!`` (a scalar, same for all
+    leaves). ``Htilde_n(x) = sigma^n H_n(sigma x)``. Evaluated at ``x = +k``: the
+    finite differences are forward slopes, so forecasting ``k`` steps PAST the
+    newest anchor evaluates at ``+k`` (the upstream TaylorSeer convention);
+    ``-k`` extrapolates backwards (odd-order terms flip sign). Corrected to match
+    hicache-plus-plus 1.2.0."""
+    x = float(k)
     htilde = (sigma ** order) * physicists_hermite(order, sigma * x)
     return htilde / math.factorial(order)
 
