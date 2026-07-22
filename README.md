@@ -2,6 +2,12 @@
 
 # Fast-SAM3D **++** &nbsp;·&nbsp; HiCache++
 
+<p>
+  <a href="https://github.com/Archerkattri/fastsam3d-plus-plus/releases"><img alt="Release" src="https://img.shields.io/github/v/release/Archerkattri/fastsam3d-plus-plus?color=1f6feb"></a>
+  <a href="LICENSE"><img alt="License" src="https://img.shields.io/github/license/Archerkattri/fastsam3d-plus-plus?color=0d9488"></a>
+</p>
+
+
 **Image-to-3D, faster — Fast-SAM3D with a tree-aware HiCache++ cache that forecasts the slat-stage
 velocity with an *exponential* (DMD / Prony) basis.**
 
