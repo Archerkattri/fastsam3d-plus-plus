@@ -94,6 +94,14 @@ class FlowMatching(Base):
     def disable_hicache(self):
         self._solver.disable_hicache(); return self
 
+    def get_hicache_telemetry(self):
+        """Return telemetry from the current or most recently completed trajectory."""
+        return self._solver.get_hicache_telemetry()
+
+    def get_hicache_manifest(self):
+        """Return the latest identity-bound budget manifest."""
+        return self._solver.get_hicache_manifest()
+
     def _get_solver(self, solver_method, solver_kwargs):
         if solver_method in FlowMatching.SOLVER_METHODS:
             solver = FlowMatching.SOLVER_METHODS[solver_method](**solver_kwargs)

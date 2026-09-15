@@ -106,6 +106,9 @@ fm.enable_hicache(interval=6, backend="dmd", history=5)   # backend="hermite" ->
 # ... run the pipeline / sampler as usual ...
 
 fm.disable_hicache()   # back to the dense (uncached) schedule
+
+# After a run, inspect the actual schedule and forecast/fallback methods.
+telemetry = fm.get_hicache_telemetry()
 ```
 
 Both `enable_dmd` and `enable_hicache(..., backend="dmd")` store the config on the Euler solver;
@@ -115,6 +118,14 @@ on each step the solver calls `hicache_decide` and, when it returns `"forecast"`
 [`accel.py`](sam3d_objects/model/backbone/generator/flow_matching/accel.py),
 [`solver.py`](sam3d_objects/model/backbone/generator/flow_matching/solver.py), and
 [`model.py`](sam3d_objects/model/backbone/generator/flow_matching/model.py).
+The adapter delegates to the canonical `hicache-pp>=1.2.1` PyTree implementation, including
+per-window DMD fit reuse, owned snapshots, and detached telemetry. The SS stage's native
+TaylorSeer/carving path is not enabled by these methods.
+
+For a reproducible GPU A/B run, use the portable
+[`benchmarks/fastsam3d-plus-plus.json`](benchmarks/fastsam3d-plus-plus.json) manifest and
+`ab_accel_bench.py`. If the geometry scorer is stored outside this checkout, point
+`FASTSAM3D_METRICS_PATH` at the directory containing `metrics.py`.
 
 ## Results
 
@@ -130,19 +141,13 @@ library [`hicache-plus-plus`](https://github.com/Archerkattri/hicache-plus-plus)
 > calls). The SS stage already runs a fixed TaylorSeer stride, so Hermite ⇄ DMD there is a wash.
 
 
-### hicache-pp 1.2.0 alignment (2026-06-10)
+### Central API alignment
 
-Two updates relative to [hicache-plus-plus 1.2.0](https://github.com/Archerkattri/hicache-plus-plus):
-
-- **Hermite comparison arm corrected.** The vendored Hermite forecast (the HiCache baseline
-  arm, also the DMD warm-up fallback) evaluated the basis at `x = -k`; corrected to `x = +k`
-  (the upstream TaylorSeer distance convention; `-k` flips every odd-order term). The
-  published numbers above were measured with the as-released code and remain valid
-  as-measured. The DMD arm itself is unaffected by the sign convention.
-- **Eigencache not yet vendored.** hicache-plus-plus 1.2.0 caches the DMD eigendecomposition
-  per compute window; the DMD fit vendored here still refits on every skipped step. That is
-  forecast-side latency overhead only (quality is identical); the standalone library ships
-  the cached fit, and porting it here is pending.
+The PyTree acceleration implementation is maintained by
+[`hicache-plus-plus`](https://github.com/Archerkattri/hicache-plus-plus), pinned here as
+`hicache-pp>=1.2.1`. This fork keeps only the compatibility import surface in `accel.py`, so
+future fixes to scheduling, DMD eigencache behavior, snapshot ownership, or telemetry do not
+diverge between model integrations.
 
 ## Attribution
 
@@ -239,3 +244,9 @@ Part of the **HiCache++ acceleration family**.
 
 - **Family hub:** [`hicache-plus-plus`](https://github.com/Archerkattri/hicache-plus-plus) — the basis library behind this adapter.
 - **Sibling:** [`fastsam3d-plus`](https://github.com/Archerkattri/fastsam3d-plus) — the same base model with the HiCache (scaled-Hermite) polynomial-forecast variant.
+
+## Current release status
+
+The current adapter includes shared HiCache++ cache identity, timing and
+fallback accounting. Six CPU contract tests pass. GPU model execution,
+segmentation quality and end-to-end speed comparisons remain unmeasured.

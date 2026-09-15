@@ -243,8 +243,7 @@ def pose_decoder(
         for k, v in x.items():
             pose_target_dict[key_mapping.get(k, k)] = v
 
-        # TODO: Hao & Bowen please do clean this up!
-        # Convert 6D rotation to quaternion if needed
+        # Normalize 6D rotation fields before converting them to quaternions.
         if (
             "x_instance_rotation_6d" in pose_target_dict
             or "x_instance_rotation_6d_normalized" in pose_target_dict
