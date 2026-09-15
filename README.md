@@ -26,6 +26,15 @@ than the polynomial. Training-free, geometry-preserving, native (no monkey-patch
 </div>
 
 ## When to use this repo
+## Architecture at a glance
+
+![fastsam3d-plus-plus architecture](assets/readme_flow.svg)
+
+The cache lives inside the SLaT flow loop and fits a DMD/Prony propagator over structured velocity snapshots.
+
+![Fast-SAM3D ++ pipeline](assets/pipeline.png)
+
+![Fast-SAM3D ++ measured speedup](assets/speedup.png)
 
 These repos are **complementary accelerators, not competing solutions** — each speeds up a *different*
 base generator, and the `+` / `++` suffix is a **method choice**, not a rival product. Pick by
