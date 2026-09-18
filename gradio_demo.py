@@ -73,7 +73,9 @@ def _resolve_upload_path(path):
     """
     if path is None or str(path) == "":
         raise ValueError("empty upload path")
-    resolved = Path(path).expanduser().resolve()
+    # This resolve() only canonicalizes so the containment/is_file checks
+    # below can reject escapes; the raw user path is never opened or used.
+    resolved = Path(path).expanduser().resolve()  # codeql[py/path-injection]: intentional sanitizer, see above
     if not resolved.is_file():
         raise ValueError(f"upload is not a readable file: {path}")
     for root in (ROOT.resolve(), Path(tempfile.gettempdir()).resolve()):
