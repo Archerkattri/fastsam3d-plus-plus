@@ -2,6 +2,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import uuid
 from pathlib import Path
@@ -25,6 +26,62 @@ MODE_ARGS = {
 }
 
 
+def _checked_int(name, value, low, high):
+    """Coerce a UI-provided value to int and range-check it.
+
+    Non-numeric input (e.g. an injected flag string) raises ValueError
+    instead of flowing into the inference subprocess argv.
+    """
+    try:
+        number = int(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"invalid {name}: {value!r}") from None
+    if isinstance(value, bool) or not low <= number <= high:
+        raise ValueError(f"{name} out of range [{low}, {high}]: {value!r}")
+    return number
+
+
+def _checked_float(name, value, low, high):
+    """Coerce a UI-provided value to float and range-check it.
+
+    Non-numeric input (e.g. an injected flag string) raises ValueError
+    instead of flowing into the inference subprocess argv.
+    """
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        raise ValueError(f"invalid {name}: {value!r}") from None
+    if isinstance(value, bool) or not low <= number <= high:
+        raise ValueError(f"{name} out of range [{low}, {high}]: {value!r}")
+    return number
+
+
+def _require_within(path, root):
+    """Canonicalize path and require containment within root (symlink-safe)."""
+    resolved = Path(path).resolve()
+    root_resolved = Path(root).resolve()
+    if resolved != root_resolved and root_resolved not in resolved.parents:
+        raise ValueError(f"path outside {root_resolved}: {path}")
+    return resolved
+
+
+def _resolve_upload_path(path):
+    """Canonicalize a user-influenced path and contain it within expected roots.
+
+    Gradio uploads land in the system temp dir; bundled defaults live under
+    ROOT. Anything else (symlink escapes included) is rejected.
+    """
+    if path is None or str(path) == "":
+        raise ValueError("empty upload path")
+    resolved = Path(path).expanduser().resolve()
+    if not resolved.is_file():
+        raise ValueError(f"upload is not a readable file: {path}")
+    for root in (ROOT.resolve(), Path(tempfile.gettempdir()).resolve()):
+        if resolved == root or root in resolved.parents:
+            return resolved
+    raise ValueError(f"upload path outside allowed directories: {path}")
+
+
 def _timestamp():
     return time.strftime("%Y%m%d_%H%M%S")
 
@@ -34,9 +91,10 @@ def _default_value(path):
 
 
 def _preview_file(path):
-    if path and Path(path).exists():
-        return path
-    return None
+    try:
+        return str(_resolve_upload_path(path))
+    except (ValueError, OSError):
+        return None
 
 
 def _format_elapsed(seconds):
@@ -72,12 +130,16 @@ def _new_session_dir():
 
 
 def _save_image(src_path, dst_path):
-    with Image.open(src_path) as image:
+    src = _resolve_upload_path(src_path)
+    _require_within(dst_path, OUTPUT_ROOT)
+    with Image.open(src) as image:
         image.convert("RGB").save(dst_path)
 
 
 def _save_mask(src_path, dst_path):
-    shutil.copyfile(src_path, dst_path)
+    src = _resolve_upload_path(src_path)
+    _require_within(dst_path, OUTPUT_ROOT)
+    shutil.copyfile(src, dst_path)
 
 
 def _latest_file(output_dir, suffix):
@@ -100,6 +162,24 @@ def _build_command(
     mesh_spectral_threshold_low,
     mesh_spectral_threshold_high,
 ):
+    if mode not in MODE_ARGS:
+        raise ValueError(f"unknown mode: {mode!r}")
+    seed = _checked_int("seed", seed, -(2 ** 31), 2 ** 31 - 1)
+    ss_faster_stride = _checked_int("ss_faster_stride", ss_faster_stride, 1, 8)
+    ss_warmup = _checked_int("ss_warmup", ss_warmup, 0, 8)
+    ss_order = _checked_int("ss_order", ss_order, 1, 3)
+    ss_momentum_beta = _checked_float("ss_momentum_beta", ss_momentum_beta, 0.0, 1.0)
+    slat_thresh = _checked_float("slat_thresh", slat_thresh, 0.0, 5.0)
+    slat_warmup = _checked_int("slat_warmup", slat_warmup, 0, 8)
+    slat_token_ratio = _checked_float("slat_token_ratio", slat_token_ratio, 0.0, 0.9)
+    mesh_spectral_threshold_low = _checked_float(
+        "mesh_spectral_threshold_low", mesh_spectral_threshold_low, 0.0, 1.0
+    )
+    mesh_spectral_threshold_high = _checked_float(
+        "mesh_spectral_threshold_high", mesh_spectral_threshold_high, 0.0, 1.0
+    )
+    image_path = _require_within(image_path, OUTPUT_ROOT)
+    output_dir = _require_within(output_dir, OUTPUT_ROOT)
     return [
         sys.executable,
         str(INFER_SCRIPT),
@@ -167,24 +247,28 @@ def generate(
     mask_path = input_dir / "0.png"
     log_path = session_dir / "run.log"
 
-    _save_image(image_file, image_path)
-    _save_mask(mask_file, mask_path)
+    try:
+        _save_image(image_file, image_path)
+        _save_mask(mask_file, mask_path)
 
-    cmd = _build_command(
-        image_path=image_path,
-        output_dir=output_dir,
-        mode=mode,
-        seed=seed,
-        ss_faster_stride=ss_faster_stride,
-        ss_warmup=ss_warmup,
-        ss_order=ss_order,
-        ss_momentum_beta=ss_momentum_beta,
-        slat_thresh=slat_thresh,
-        slat_warmup=slat_warmup,
-        slat_token_ratio=slat_token_ratio,
-        mesh_spectral_threshold_low=mesh_spectral_threshold_low,
-        mesh_spectral_threshold_high=mesh_spectral_threshold_high,
-    )
+        cmd = _build_command(
+            image_path=image_path,
+            output_dir=output_dir,
+            mode=mode,
+            seed=seed,
+            ss_faster_stride=ss_faster_stride,
+            ss_warmup=ss_warmup,
+            ss_order=ss_order,
+            ss_momentum_beta=ss_momentum_beta,
+            slat_thresh=slat_thresh,
+            slat_warmup=slat_warmup,
+            slat_token_ratio=slat_token_ratio,
+            mesh_spectral_threshold_low=mesh_spectral_threshold_low,
+            mesh_spectral_threshold_high=mesh_spectral_threshold_high,
+        )
+    except (ValueError, OSError) as exc:
+        yield None, [], _status_html("Failed", mode, time.time() - start_time), f"Invalid request: {exc}", str(session_dir)
+        return
 
     env = os.environ.copy()
     env.setdefault("PYTHONPATH", str(ROOT))
@@ -201,6 +285,7 @@ def generate(
 
     with subprocess.Popen(
         cmd,
+        shell=False,  # argv list only; never invoke a shell
         cwd=str(ROOT),
         env=env,
         stdout=subprocess.PIPE,
