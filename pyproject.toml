@@ -31,9 +31,12 @@ Upstream = "https://github.com/wlfeng0509/Fast-SAM3D"
 
 [tool.hatch.build]
 ignore-vcs = true
-include = ["**/*.py"]
+include = ["**/*.py", "forecast_basis.py"]
 exclude = ["conftest.py", "*_test.py"]
-packages = ["sam3d_objects"]
+packages = ["sam3d_objects", "faster_utils_slat", "taylor_utils_slat", "token_slat"]
+
+[tool.hatch.build.targets.wheel]
+force-include = {"forecast_basis.py" = "forecast_basis.py"}
 
 [tool.hatch.metadata.hooks.requirements_txt]
 files = ["requirements.txt"]
