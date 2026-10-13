@@ -12,14 +12,31 @@ allow-direct-references = true
 [project]
 name = "sam3d_objects"
 version = "0.0.2"
+description = "HiCache++ DMD acceleration for Fast-SAM3D single-image 3D object generation."
+requires-python = ">=3.11"
+license = "LicenseRef-Meta-SAM-3D-Objects"
+license-files = ["LICENSE"]
+classifiers = [
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+]
 # required for "hatch-requirements-txt" to work
 dynamic = ["dependencies", "optional-dependencies"]
 
+[project.urls]
+Repository = "https://github.com/Archerkattri/fastsam3d-plus-plus"
+Upstream = "https://github.com/wlfeng0509/Fast-SAM3D"
+
 [tool.hatch.build]
 ignore-vcs = true
-include = ["**/*.py"]
+include = ["**/*.py", "forecast_basis.py"]
 exclude = ["conftest.py", "*_test.py"]
-packages = ["sam3d_objects"]
+packages = ["sam3d_objects", "faster_utils_slat", "taylor_utils_slat", "token_slat"]
+
+[tool.hatch.build.targets.wheel]
+force-include = {"forecast_basis.py" = "forecast_basis.py"}
 
 [tool.hatch.metadata.hooks.requirements_txt]
 files = ["requirements.txt"]

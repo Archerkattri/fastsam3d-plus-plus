@@ -498,7 +498,7 @@ button.primary {
 """
 
 
-with gr.Blocks(title="Fast-SAM3D Demo", css=CSS) as demo:
+with gr.Blocks(title="Fast-SAM3D Demo") as demo:
     with gr.Column(elem_classes=["fast-shell"]):
         gr.HTML(
             """
@@ -619,4 +619,5 @@ if __name__ == "__main__":
         server_port=7861,
         share=True,
         show_error=True,
+        css=CSS,
     )
